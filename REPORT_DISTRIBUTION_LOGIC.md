@@ -17,17 +17,6 @@
   - User paid for "Elite Alpha" in May.
   - User downgrades to "Level 1 Core" in June.
   - **Result:** The user maintains access to the full "Elite Alpha" reports distributed in May, but can only see "Level 1 Core" reports for June.
-- **Technical Check:** 
-  ```javascript
-  const canAccess = (user, report) => {
-    const matchingPeriod = user.subscriptionHistory.find(period => 
-      report.distributionTimestamp >= period.startDate && 
-      report.distributionTimestamp <= period.endDate &&
-      isTierIncluded(period.level, report.bundleTier)
-    );
-    return !!matchingPeriod;
-  }
-  ```
 
 ## 4. Dual-Timestamp Headers
 Every report will now include a standardized metadata header:
@@ -39,3 +28,14 @@ DISTRIBUTION_TIME: 2026-05-16 16:00:00 UTC
 SRI_AUTH_INDEX: SRI-SYNTH-XRP-2026-M0516
 ---
 ```
+
+## 5. Truth Threshold & Error Correction (The 3-Attempt Rule)
+To prevent "Time to Release" bottlenecks while maintaining >75% certainty:
+1.  **Detection:** If a GEM vector analysis returns <75% confidence due to missing evidence, the system flags the specific data gap.
+2.  **Targeted Re-scrape & Retry Delay:** The system triggers a targeted scan of related public sources (PACER, SEC, etc.).
+    *   **Max Attempts:** 3.
+    *   **Retry Interval:** Mandatory **10-minute delay** between attempts to allow external sources (Government faxes, server syncs) to complete their uploads.
+3.  **Conflict Resolution (The "Clean or Flag" Rule):** If the threshold is still not met after the 3rd attempt, the system presents two options for the HITL review:
+    *   **Option A (Flagging):** Retain the section but explicitly label it as "Inconclusive - Further Research Required by Client."
+    *   **Option B (Surgical Pruning):** Isolate the specific inconclusive data/text and remove only the conflicting segments. The system must automatically refactor the surrounding text to ensure the presentation remains professional, understandable, and free of gaps.
+4.  **Finality:** Once the Auditor (Rex) chooses the resolution, the report is finalized for approval.
