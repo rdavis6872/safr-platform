@@ -9,7 +9,10 @@
 - **Logic:** Each Tier is a "Cumulative Stack."
   - **Level 1 Plus** = Level 1 Core content + Extra Research.
   - **Level 3 Elite** = Everything from Level 1, Level 2, and Level 3 Core + Elite Daily metrics.
-- **Implementation:** The `SAFR Distribution Engine` will append Markdown fragments in order of the subscription matrix to create a single, cohesive file for that tier.
+- **Track 2: Influencer Media Kit (The Masked Layer):**
+  - **Source:** Generated directly from the **Level 1 Core** and **Level 1 Plus** content.
+  - **Masking Protocol:** The system automatically identifies all Safion Reference Identifiers (SRIs) and internal forensic jargon, replacing them with broad-market context links (e.g., Congress.gov, Bloomberg, etc.).
+  - **Compliance:** This ensures influencers receive high-value facts without gaining access to the proprietary SRI indexing system reserved for premium Track 1 subscribers.
 
 ## 3. Persistent Historical Access
 - **Rule:** A user's right to a report is locked at the moment of distribution. 
