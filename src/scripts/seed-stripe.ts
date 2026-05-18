@@ -19,8 +19,11 @@ const tiers = [
   { name: "The Safion Sovereign Daily", price: 300000, tier_id: "ELITE" },
 ];
 
+// Based on $400 off $2,388 ($199*12), the discount is approx 16.75%
+const YEARLY_DISCOUNT_PERCENT = 0.1675;
+
 async function seedStripe() {
-  console.log("Seeding Stripe Products & Prices with $400 Yearly Discount...");
+  console.log(`Seeding Stripe Products & Prices with ${YEARLY_DISCOUNT_PERCENT * 100}% Yearly Discount...`);
 
   for (const tier of tiers) {
     try {
@@ -41,27 +44,24 @@ async function seedStripe() {
         metadata: { tier_id: tier.tier_id },
       });
 
-      // 3. Create Yearly Price ($400 Discount Rule)
-      // Yearly = (Monthly * 12) - 40,000 cents ($400)
-      const yearlyAmount = (tier.price * 12) - 40000;
-      
-      // Safety check: ensure yearly is positive (for very low tiers)
-      const finalYearlyAmount = yearlyAmount > 0 ? yearlyAmount : Math.floor(tier.price * 10);
+      // 3. Create Yearly Price (Percentage Discount Rule)
+      const yearlyFullPrice = tier.price * 12;
+      const yearlyDiscountedAmount = Math.floor(yearlyFullPrice * (1 - YEARLY_DISCOUNT_PERCENT));
 
       const yearlyPrice = await stripe.prices.create({
         product: product.id,
-        unit_amount: finalYearlyAmount,
+        unit_amount: yearlyDiscountedAmount,
         currency: "usd",
         recurring: { interval: "year" },
         metadata: { 
           tier_id: tier.tier_id,
-          discount_applied: "400_OFF_YEARLY" 
+          discount_applied: `${YEARLY_DISCOUNT_PERCENT * 100}%_OFF_YEARLY` 
         },
       });
 
       console.log(`✅ Created ${tier.name} (${tier.tier_id})`);
-      console.log(`   - Monthly: $${tier.price / 100} (Price ID: ${monthlyPrice.id})`);
-      console.log(`   - Yearly:  $${finalYearlyAmount / 100} (Price ID: ${yearlyPrice.id}) - $400 Savings`);
+      console.log(`   - Monthly: $${tier.price / 100}`);
+      console.log(`   - Yearly:  $${yearlyDiscountedAmount / 100} (Saved $${(yearlyFullPrice - yearlyDiscountedAmount) / 100})`);
     } catch (error: any) {
       console.error(`❌ Failed to create ${tier.name}:`, error.message);
     }
