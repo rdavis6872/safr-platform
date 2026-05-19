@@ -3,12 +3,13 @@
 ## 1. `users` Collection
 - `uid`: string (Primary Key)
 - `email`: string
+- `role`: string (admin, staff, user)
 - `stripeCustomerId`: string
 - `subscriptionHistory`: array
-  - `level`: string
+  - `level`: string (L1_CORE ... ELITE, or INTERNAL_ELITE)
   - `startDate`: timestamp
   - `endDate`: timestamp
-  - `status`: string (active, expired)
+  - `status`: string (active, expired, perpetual)
 - `currentSubscription`: map
   - `level`: string
   - `activeFrom`: timestamp

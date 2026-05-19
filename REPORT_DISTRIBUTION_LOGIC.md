@@ -16,6 +16,9 @@
 
 ## 3. Persistent Historical Access
 - **Rule:** A user's right to a report is locked at the moment of distribution. 
+- **Staff/Guest Access (INTERNAL_ELITE):**
+  - Users assigned the `INTERNAL_ELITE` tier (typically via Admin override) gain **unrestricted access** to all reports across all historical dates, regardless of distribution time.
+  - This tier automatically "unpacks" the highest available bundle (Elite Alpha).
 - **Scenario:** 
   - User paid for "Elite Alpha" in May.
   - User downgrades to "Level 1 Core" in June.
