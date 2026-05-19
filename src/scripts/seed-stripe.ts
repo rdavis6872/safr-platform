@@ -21,11 +21,31 @@ const tiers = [
 
 // Based on $400 off $2,388 ($199*12), the discount is approx 16.75%
 const YEARLY_DISCOUNT_PERCENT = 0.1675;
-
 async function seedStripe() {
   console.log(`Seeding Stripe Products & Prices with ${YEARLY_DISCOUNT_PERCENT * 100}% Yearly Discount...`);
 
+  // 0. Create the "Try SAFR" Coupon for 50% off
+  // This will be applied to the 2nd month via our Backend Webhook logic
+  try {
+    const coupon = await stripe.coupons.create({
+      id: "TRY_SAFR_50_OFF",
+      name: "1/2 Off 2nd Month",
+      percent_off: 50,
+      duration: "once", // Applies to a single billing cycle
+      metadata: { promotion_type: "new_customer_trial" }
+    });
+    console.log(`✅ Created Promotion Coupon: ${coupon.id}`);
+  } catch (error: any) {
+    if (error.code === 'resource_already_exists') {
+      console.log("ℹ️ Coupon 'TRY_SAFR_50_OFF' already exists.");
+    } else {
+      console.error("❌ Failed to create coupon:", error.message);
+    }
+  }
+
   for (const tier of tiers) {
+...
+
     try {
       // 1. Create Product
       const product = await stripe.products.create({
